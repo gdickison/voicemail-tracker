@@ -237,7 +237,7 @@ export default function Home() {
                     <td>{voicemail.takenBy}</td>
                     <td className="actions-cell">
                       {!voicemail.returned && (
-                        <button className="returned-btn" onClick={() => markVoicemailAsReturned(voicemail.id)}>Returned</button>
+                        <button className="btn-returned" onClick={() => markVoicemailAsReturned(voicemail.id)}>Returned</button>
                       )}
                       <button className="delete-btn" onClick={() => confirmDelete(voicemail.id)}>Delete</button>
                     </td>

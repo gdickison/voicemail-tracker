@@ -156,30 +156,44 @@
   text-align: center;
 }
 
-.voicemail-card .actions button {
-  background-color: #6a0dad; /* Darker purple for actions */
-  color: white;
-  padding: 10px 16px;
+.actions-cell {
+  white-space: nowrap;
+  text-align: center;
+}
+
+.actions-cell button {
+  padding: 8px 16px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-family: var(--font-roboto), sans-serif;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.85rem;
+  font-weight: 600;
   transition: all 0.3s ease;
   letter-spacing: 0.3px;
+  margin: 0 4px;
 }
 
-.voicemail-card .actions button:hover {
-  background-color: #5a009d;
+.actions-cell button:hover {
+  transform: translateY(-1px);
 }
 
 .btn-returned {
   background-color: #22c55e; /* Green for returned */
+  color: white;
 }
 
 .btn-returned:hover {
   background-color: #16a34a;
+}
+
+.delete-btn {
+  background-color: #dc2626; /* Red for delete */
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #b91c1c;
 }
 
 .modal-overlay {
