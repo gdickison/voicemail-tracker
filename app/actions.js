@@ -4,87 +4,22 @@ import { neon } from "@neondatabase/serverless";
 // Initialize the database connection
 const sql = neon(process.env.DATABASE_URL);
 
-/**
- * Initialize the database with the required tables
- */
-export async function initializeDatabase() {
+// Test the database connection
+export async function testConnection() {
   try {
-    await sql`
-      CREATE TABLE IF NOT EXISTS users (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-      )
-    `;
-
-    await sql`
-      CREATE TABLE IF NOT EXISTS voicemails (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-        from_name TEXT NOT NULL,
-        to_name TEXT NOT NULL,
-        phone_number TEXT NOT NULL,
-        message_content TEXT NOT NULL,
-        date_time TIMESTAMP WITH TIME ZONE NOT NULL,
-        taken_by TEXT NOT NULL,
-        returned BOOLEAN DEFAULT FALSE,
-        returned_at TIMESTAMP WITH TIME ZONE,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-      )
-    `;
-
-    console.log("Database initialized successfully");
+    const result = await sql`SELECT NOW()`;
+    console.log('Database connected successfully:', result[0]);
+    return true;
   } catch (error) {
-    console.error("Error initializing database:", error);
-    throw error;
+    console.error('Database connection failed:', error);
+    return false;
   }
 }
 
 /**
- * Create a new user and return their ID
+ * Get all voicemails that haven't been returned
  */
-export async function createUser() {
-  try {
-    const result = await sql`
-      INSERT INTO users (id)
-      VALUES (gen_random_uuid())
-      RETURNING id
-    `;
-    return result[0].id;
-  } catch (error) {
-    console.error("Error creating user:", error);
-    throw error;
-  }
-}
-
-/**
- * Get or create a user ID (for session management)
- */
-export async function getOrCreateUserId(userId) {
-  if (!userId || userId === 'Loading...' || userId.startsWith('Error')) {
-    return await createUser();
-  }
-  
-  // Verify the user exists
-  try {
-    const result = await sql`
-      SELECT id FROM users WHERE id = ${userId}
-    `;
-    
-    if (result.length === 0) {
-      return await createUser();
-    }
-    
-    return userId;
-  } catch (error) {
-    console.error("Error verifying user:", error);
-    return await createUser();
-  }
-}
-
-/**
- * Get all voicemails for a user that haven't been returned
- */
-export async function getVoicemails(userId) {
+export async function getVoicemails() {
   try {
     const result = await sql`
       SELECT 
@@ -99,7 +34,7 @@ export async function getVoicemails(userId) {
         returned_at,
         created_at
       FROM voicemails 
-      WHERE user_id = ${userId} AND returned = FALSE
+      WHERE returned = FALSE
       ORDER BY date_time DESC
     `;
     
@@ -124,11 +59,10 @@ export async function getVoicemails(userId) {
 /**
  * Add a new voicemail
  */
-export async function addVoicemail(userId, voicemailData) {
+export async function addVoicemail(voicemailData) {
   try {
     const result = await sql`
       INSERT INTO voicemails (
-        user_id,
         from_name,
         to_name,
         phone_number,
@@ -136,7 +70,6 @@ export async function addVoicemail(userId, voicemailData) {
         date_time,
         taken_by
       ) VALUES (
-        ${userId},
         ${voicemailData.fromName},
         ${voicemailData.toName},
         ${voicemailData.phoneNumber},
@@ -157,11 +90,11 @@ export async function addVoicemail(userId, voicemailData) {
 /**
  * Delete a voicemail
  */
-export async function deleteVoicemail(userId, voicemailId) {
+export async function deleteVoicemail(voicemailId) {
   try {
     await sql`
       DELETE FROM voicemails 
-      WHERE id = ${voicemailId} AND user_id = ${userId}
+      WHERE id = ${voicemailId}
     `;
     
     return true;
@@ -174,12 +107,12 @@ export async function deleteVoicemail(userId, voicemailId) {
 /**
  * Mark a voicemail as returned
  */
-export async function markVoicemailAsReturned(userId, voicemailId) {
+export async function markVoicemailAsReturned(voicemailId) {
   try {
     await sql`
       UPDATE voicemails 
       SET returned = TRUE, returned_at = NOW()
-      WHERE id = ${voicemailId} AND user_id = ${userId}
+      WHERE id = ${voicemailId}
     `;
     
     return true;

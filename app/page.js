@@ -3,8 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  initializeDatabase, 
-  getOrCreateUserId, 
+  testConnection,
   getVoicemails, 
   addVoicemail as addVoicemailToDb, 
   deleteVoicemail as deleteVoicemailFromDb, 
@@ -22,33 +21,25 @@ export default function Home() {
 
   // State for voicemail list and UI elements
   const [voicemails, setVoicemails] = useState([]);
-  const [currentUserId, setCurrentUserId] = useState('Loading...');
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [deleteDocId, setDeleteDocId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Effect for database initialization and user setup
+  // Effect for database connection test
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        // Initialize database tables
-        await initializeDatabase();
+        // Test database connection
+        const isConnected = await testConnection();
         
-        // Get or create user ID from localStorage
-        let userId = localStorage.getItem('voicemailUserId');
-        userId = await getOrCreateUserId(userId);
-        
-        // Store the user ID
-        localStorage.setItem('voicemailUserId', userId);
-        setCurrentUserId(userId);
-        
-        // Load voicemails
-        await loadVoicemails(userId);
+        if (isConnected) {
+          // Load voicemails
+          await loadVoicemails();
+        }
         
         setIsLoading(false);
       } catch (error) {
         console.error('Error initializing app:', error);
-        setCurrentUserId('Error: Failed to initialize');
         setIsLoading(false);
       }
     };
@@ -57,17 +48,11 @@ export default function Home() {
   }, []); // Empty dependency array means this runs once on mount
 
   /**
-   * Loads voicemails from the database for the current user.
-   * @param {string} userId - The current user's ID.
+   * Loads voicemails from the database.
    */
-  const loadVoicemails = async (userId) => {
-    if (!userId || userId.startsWith('Error')) {
-      console.warn("Cannot load voicemails: User ID not ready/valid.");
-      return;
-    }
-
+  const loadVoicemails = async () => {
     try {
-      const fetchedVoicemails = await getVoicemails(userId);
+      const fetchedVoicemails = await getVoicemails();
       setVoicemails(fetchedVoicemails);
     } catch (error) {
       console.error("Error loading voicemails: ", error);
@@ -81,13 +66,13 @@ export default function Home() {
   const addVoicemail = async (event) => {
     event.preventDefault(); // Prevent default form submission
 
-    if (!currentUserId || currentUserId.startsWith('Error') || isLoading) {
-      console.error("Database not ready or user not initialized yet.");
+    if (isLoading) {
+      console.error("Database not ready yet.");
       return;
     }
 
     try {
-      await addVoicemailToDb(currentUserId, {
+      await addVoicemailToDb({
         fromName,
         toName,
         phoneNumber,
@@ -99,7 +84,7 @@ export default function Home() {
       console.log("Voicemail added successfully!");
       
       // Reload voicemails to show the new one
-      await loadVoicemails(currentUserId);
+      await loadVoicemails();
       
       // Clear the form fields
       setFromName('');
@@ -134,16 +119,16 @@ export default function Home() {
    * Handles the deletion of a voicemail from the database.
    */
   const deleteVoicemail = async () => {
-    if (!deleteDocId || !currentUserId || currentUserId.startsWith('Error')) {
-      console.error("No document ID to delete or user not ready.");
+    if (!deleteDocId) {
+      console.error("No document ID to delete.");
       return;
     }
     try {
-      await deleteVoicemailFromDb(currentUserId, deleteDocId);
+      await deleteVoicemailFromDb(deleteDocId);
       console.log("Voicemail successfully deleted!");
       
       // Reload voicemails to update the list
-      await loadVoicemails(currentUserId);
+      await loadVoicemails();
     } catch (error) {
       console.error("Error removing voicemail: ", error);
     } finally {
@@ -156,16 +141,12 @@ export default function Home() {
    * @param {string} id - The document ID of the voicemail to mark as returned.
    */
   const markVoicemailAsReturned = async (id) => {
-    if (!currentUserId || currentUserId.startsWith('Error')) {
-      console.error("Database or user not ready.");
-      return;
-    }
     try {
-      await markVoicemailAsReturnedInDb(currentUserId, id);
+      await markVoicemailAsReturnedInDb(id);
       console.log("Voicemail marked as returned:", id);
       
       // Reload voicemails to update the list (returned voicemails will be filtered out)
-      await loadVoicemails(currentUserId);
+      await loadVoicemails();
     } catch (error) {
       console.error("Error marking voicemail as returned: ", error);
     }
@@ -241,9 +222,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div id="userIdDisplay" className="user-id-display">
-        Your User ID: <span id="currentUserId">{currentUserId}</span>
-      </div>
+
 
       {/* Confirmation Modal */}
       {showConfirmationModal && (
