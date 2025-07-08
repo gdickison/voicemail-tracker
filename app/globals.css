@@ -101,49 +101,59 @@
 
 .voicemail-list-container {
   width: 100%;
-  max-width: 600px;
+  max-width: 1200px;
   margin-inline: auto;
   font-family: var(--font-roboto), sans-serif;
 }
 
-.voicemail-card {
-  background-color: #ffc0cb; /* Pink color for cards */
-  border: 2px solid #e0b0c0;
+.voicemail-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffc0cb;
   border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.15);
-  position: relative;
   overflow: hidden;
-}
-
-.voicemail-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 15px;
-  width: 2px;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-.voicemail-card p {
-  margin-bottom: 10px;
-  color: #4a0000;
-  line-height: 1.5;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.15);
   font-family: var(--font-roboto), sans-serif;
-  font-size: 0.95rem;
 }
 
-.voicemail-card p strong {
-  color: #8b0000;
+.voicemail-table thead {
+  background-color: #e0b0c0;
 }
 
-.voicemail-card .actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 15px;
+.voicemail-table th {
+  padding: 15px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #4a0000;
+  font-size: 0.9rem;
+  border-bottom: 2px solid #d0a0b0;
+}
+
+.voicemail-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f0a0b0;
+  color: #4a0000;
+  font-size: 0.9rem;
+  vertical-align: top;
+}
+
+.voicemail-table tbody tr:hover {
+  background-color: #f0b0c0;
+}
+
+.voicemail-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.message-cell {
+  max-width: 300px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.actions-cell {
+  white-space: nowrap;
+  text-align: center;
 }
 
 .voicemail-card .actions button {

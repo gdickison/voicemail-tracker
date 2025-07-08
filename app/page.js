@@ -210,28 +210,43 @@ export default function Home() {
 
       <div className="voicemail-list-container">
         <h2 className="form-title text-2xl mb-4">Your Voicemails</h2>
-        <div id="voicemailList" className="space-y-4">
-          {voicemails.length === 0 ? (
-            <p className="text-center text-gray-600">No voicemails to display.</p>
-          ) : (
-            voicemails.map((voicemail) => (
-              <div key={voicemail.id} className="voicemail-card">
-                <p><strong>From:</strong> {voicemail.fromName}</p>
-                <p><strong>To:</strong> {voicemail.toName}</p>
-                <p><strong>Phone:</strong> {formatPhoneNumber(voicemail.phoneNumber)}</p>
-                <p><strong>Message:</strong> {voicemail.messageContent}</p>
-                <p><strong>Date/Time:</strong> {new Date(voicemail.dateTime).toLocaleString()}</p>
-                <p><strong>Taken By:</strong> {voicemail.takenBy}</p>
-                <div className="actions">
-                  {!voicemail.returned && (
-                    <button className="returned-btn" onClick={() => markVoicemailAsReturned(voicemail.id)}>Returned</button>
-                  )}
-                  <button className="delete-btn" onClick={() => confirmDelete(voicemail.id)}>Delete</button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+        {voicemails.length === 0 ? (
+          <p className="text-center text-gray-600">No voicemails to display.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="voicemail-table">
+              <thead>
+                <tr>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>Phone</th>
+                  <th>Message</th>
+                  <th>Date/Time</th>
+                  <th>Taken By</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {voicemails.map((voicemail) => (
+                  <tr key={voicemail.id}>
+                    <td>{voicemail.fromName}</td>
+                    <td>{voicemail.toName}</td>
+                    <td>{formatPhoneNumber(voicemail.phoneNumber)}</td>
+                    <td className="message-cell">{voicemail.messageContent}</td>
+                    <td>{new Date(voicemail.dateTime).toLocaleString()}</td>
+                    <td>{voicemail.takenBy}</td>
+                    <td className="actions-cell">
+                      {!voicemail.returned && (
+                        <button className="returned-btn" onClick={() => markVoicemailAsReturned(voicemail.id)}>Returned</button>
+                      )}
+                      <button className="delete-btn" onClick={() => confirmDelete(voicemail.id)}>Delete</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
 
