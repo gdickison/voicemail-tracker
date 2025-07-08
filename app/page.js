@@ -25,6 +25,8 @@ export default function Home() {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [deleteDocId, setDeleteDocId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [selectedVoicemail, setSelectedVoicemail] = useState(null);
 
   // Effect for database connection test
   useEffect(() => {
@@ -156,6 +158,23 @@ export default function Home() {
     }
   };
 
+  /**
+   * Opens the message modal with the selected voicemail.
+   * @param {Object} voicemail - The voicemail object to display.
+   */
+  const openMessageModal = (voicemail) => {
+    setSelectedVoicemail(voicemail);
+    setShowMessageModal(true);
+  };
+
+  /**
+   * Closes the message modal.
+   */
+  const closeMessageModal = () => {
+    setShowMessageModal(false);
+    setSelectedVoicemail(null);
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -268,7 +287,16 @@ export default function Home() {
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {voicemails.map((voicemail) => (
-                      <tr key={voicemail.id}>
+                      <tr
+                        key={voicemail.id}
+                        className="hover:bg-gray-50 cursor-pointer"
+                        onClick={(e) => {
+                          // Don't open modal if clicking on action buttons
+                          if (!e.target.closest('button')) {
+                            openMessageModal(voicemail);
+                          }
+                        }}
+                      >
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{voicemail.fromName}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{voicemail.toName}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatPhoneNumber(voicemail.phoneNumber)}</td>
@@ -280,14 +308,20 @@ export default function Home() {
                             {!voicemail.returned && (
                               <button
                                 className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition duration-150 ease-in-out"
-                                onClick={() => markVoicemailAsReturned(voicemail.id)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  markVoicemailAsReturned(voicemail.id);
+                                }}
                               >
                                 Returned
                               </button>
                             )}
                             <button
                               className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition duration-150 ease-in-out"
-                              onClick={() => confirmDelete(voicemail.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                confirmDelete(voicemail.id);
+                              }}
                             >
                               Delete
                             </button>
@@ -330,6 +364,67 @@ export default function Home() {
                   Cancel
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Message Modal */}
+      {showMessageModal && selectedVoicemail && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-6 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+            <div className="mb-4">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Voicemail Details</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">From:</label>
+                  <p className="text-sm text-gray-900">{selectedVoicemail.fromName}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">To:</label>
+                  <p className="text-sm text-gray-900">{selectedVoicemail.toName}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number:</label>
+                  <p className="text-sm text-gray-900">{formatPhoneNumber(selectedVoicemail.phoneNumber)}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Date & Time:</label>
+                  <p className="text-sm text-gray-900">{new Date(selectedVoicemail.dateTime).toLocaleString()}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Taken By:</label>
+                  <p className="text-sm text-gray-900">{selectedVoicemail.takenBy}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Status:</label>
+                  <p className="text-sm text-gray-900">
+                    {selectedVoicemail.returned ? (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Returned
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                        Pending
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Message:</label>
+                <div className="bg-gray-50 p-4 rounded-md border">
+                  <p className="text-sm text-gray-900 whitespace-pre-wrap">{selectedVoicemail.messageContent}</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end space-x-3">
+              <button
+                className="px-4 py-2 bg-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-150 ease-in-out"
+                onClick={closeMessageModal}
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
