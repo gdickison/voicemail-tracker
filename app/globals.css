@@ -14,6 +14,7 @@
   margin-bottom: 30px;
   position: relative;
   overflow: hidden;
+  margin-inline: auto;
 }
 
 .voicemail-form-container::before {
@@ -27,19 +28,24 @@
 }
 
 .form-title {
-  font-family: 'Permanent Marker', cursive; /* Fun, handwritten-like font */
+  font-family: var(--font-roboto), sans-serif;
   font-size: 2.5rem;
+  font-weight: 700;
   color: #8b0000; /* Dark red for title */
   text-align: center;
   margin-bottom: 20px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.5px;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 5px;
+  font-family: var(--font-roboto), sans-serif;
   font-weight: 600;
+  font-size: 0.95rem;
   color: #4a0000;
+  letter-spacing: 0.3px;
 }
 
 .form-group input[type="text"],
@@ -47,14 +53,25 @@
 .form-group input[type="datetime-local"],
 .form-group textarea {
   width: 100%;
-  padding: 10px;
+  padding: 12px 15px;
   margin-bottom: 15px;
   border: 1px solid #d0a0b0;
-  border-radius: 5px;
+  border-radius: 8px;
   background-color: #fff0f5; /* Lighter pink for input fields */
+  font-family: var(--font-roboto), sans-serif;
   font-size: 1rem;
   color: #333;
   box-sizing: border-box; /* Include padding in width */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="tel"]:focus,
+.form-group input[type="datetime-local"]:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #a020f0;
+  box-shadow: 0 0 0 3px rgba(160, 32, 240, 0.1);
 }
 
 .form-group textarea {
@@ -65,14 +82,16 @@
 .btn-primary {
   background-color: #a020f0; /* Purple button */
   color: white;
-  padding: 12px 20px;
+  padding: 14px 20px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
+  font-family: var(--font-roboto), sans-serif;
   font-size: 1.1rem;
   font-weight: 600;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: all 0.3s ease;
   width: 100%;
+  letter-spacing: 0.5px;
 }
 
 .btn-primary:hover {
@@ -107,9 +126,11 @@
 }
 
 .voicemail-card p {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   color: #4a0000;
-  line-height: 1.4;
+  line-height: 1.5;
+  font-family: var(--font-roboto), sans-serif;
+  font-size: 0.95rem;
 }
 
 .voicemail-card p strong {
@@ -126,12 +147,15 @@
 .voicemail-card .actions button {
   background-color: #6a0dad; /* Darker purple for actions */
   color: white;
-  padding: 8px 12px;
+  padding: 10px 16px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
+  font-family: var(--font-roboto), sans-serif;
   font-size: 0.9rem;
-  transition: background-color 0.3s ease;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
 }
 
 .voicemail-card .actions button:hover {
@@ -176,16 +200,20 @@
 }
 
 .modal-content h3 {
-  font-family: 'Permanent Marker', cursive;
-  font-size: 1.8rem;
+  font-family: var(--font-roboto), sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
   color: #8b0000;
   margin-bottom: 20px;
+  letter-spacing: 0.5px;
 }
 
 .modal-content p {
+  font-family: var(--font-roboto), sans-serif;
   font-size: 1.1rem;
   color: #4a0000;
   margin-bottom: 25px;
+  line-height: 1.5;
 }
 
 .modal-content .modal-buttons {
@@ -195,13 +223,15 @@
 }
 
 .modal-content .modal-buttons button {
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
+  font-family: var(--font-roboto), sans-serif;
   font-size: 1rem;
   font-weight: 600;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
 }
 
 .modal-content .modal-buttons .btn-confirm {
@@ -225,11 +255,13 @@
 .user-id-display {
   background-color: #f0f0f0;
   border: 1px dashed #ccc;
-  padding: 10px 15px;
-  border-radius: 5px;
+  padding: 12px 18px;
+  border-radius: 8px;
   margin-top: 20px;
+  font-family: var(--font-roboto), sans-serif;
   font-size: 0.9rem;
   color: #555;
   text-align: center;
   word-break: break-all; /* Allow long IDs to wrap */
+  letter-spacing: 0.3px;
 }
