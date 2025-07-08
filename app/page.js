@@ -168,20 +168,35 @@ export default function Home() {
   }
 
   return (
-    <>
-      <div className="voicemail-form-container">
-        <h1 className="form-title">Voicemail Message</h1>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 font-sans">
+      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Voicemail Message</h1>
+
         <form onSubmit={addVoicemail} className="space-y-4">
-          <div className="form-group">
-            <label htmlFor="fromName">From:</label>
-            <input type="text" id="fromName" value={fromName} onChange={(e) => setFromName(e.target.value)} required className="rounded-md" />
+          <div>
+            <label htmlFor="fromName" className="block text-sm font-medium text-gray-700 mb-1">From:</label>
+            <input
+              type="text"
+              id="fromName"
+              value={fromName}
+              onChange={(e) => setFromName(e.target.value)}
+              required
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            />
           </div>
-          <div className="form-group">
-            <label htmlFor="toName">To:</label>
-            <input type="text" id="toName" value={toName} onChange={(e) => setToName(e.target.value)} required className="rounded-md" />
+          <div>
+            <label htmlFor="toName" className="block text-sm font-medium text-gray-700 mb-1">To:</label>
+            <input
+              type="text"
+              id="toName"
+              value={toName}
+              onChange={(e) => setToName(e.target.value)}
+              required
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            />
           </div>
-          <div className="form-group">
-            <label htmlFor="phoneNumber">Phone Number:</label>
+          <div>
+            <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">Phone Number:</label>
             <input
               type="tel"
               id="phoneNumber"
@@ -189,81 +204,136 @@ export default function Home() {
               onChange={(e) => setPhoneNumber(formatPhoneNumber(e.target.value))}
               placeholder="(555) 123-4567"
               required
-              className="rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          <div className="form-group">
-            <label htmlFor="messageContent">Message:</label>
-            <textarea id="messageContent" rows="4" value={messageContent} onChange={(e) => setMessageContent(e.target.value)} required className="rounded-md"></textarea>
+          <div>
+            <label htmlFor="messageContent" className="block text-sm font-medium text-gray-700 mb-1">Message:</label>
+            <textarea
+              id="messageContent"
+              rows="4"
+              value={messageContent}
+              onChange={(e) => setMessageContent(e.target.value)}
+              required
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            ></textarea>
           </div>
-          <div className="form-group">
-            <label htmlFor="dateTime">Date & Time:</label>
-            <input type="datetime-local" id="dateTime" value={dateTime} onChange={(e) => setDateTime(e.target.value)} required className="rounded-md" />
+          <div>
+            <label htmlFor="dateTime" className="block text-sm font-medium text-gray-700 mb-1">Date & Time:</label>
+            <input
+              type="datetime-local"
+              id="dateTime"
+              value={dateTime}
+              onChange={(e) => setDateTime(e.target.value)}
+              required
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            />
           </div>
-          <div className="form-group">
-            <label htmlFor="takenBy">Message Taken By:</label>
-            <input type="text" id="takenBy" value={takenBy} onChange={(e) => setTakenBy(e.target.value)} required className="rounded-md" />
+          <div>
+            <label htmlFor="takenBy" className="block text-sm font-medium text-gray-700 mb-1">Message Taken By:</label>
+            <input
+              type="text"
+              id="takenBy"
+              value={takenBy}
+              onChange={(e) => setTakenBy(e.target.value)}
+              required
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"q
+            />
           </div>
-          <button type="submit" className="btn-primary">Add Voicemail</button>
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-md"
+          >
+            Add Voicemail
+          </button>
         </form>
-      </div>
 
-      <div className="voicemail-list-container">
-        <h2 className="form-title text-2xl mb-4">Your Voicemails</h2>
-        {voicemails.length === 0 ? (
-          <p className="text-center text-gray-600">No voicemails to display.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="voicemail-table">
-              <thead>
-                <tr>
-                  <th>From</th>
-                  <th>To</th>
-                  <th>Phone</th>
-                  <th>Message</th>
-                  <th>Date/Time</th>
-                  <th>Taken By</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {voicemails.map((voicemail) => (
-                  <tr key={voicemail.id}>
-                    <td>{voicemail.fromName}</td>
-                    <td>{voicemail.toName}</td>
-                    <td>{formatPhoneNumber(voicemail.phoneNumber)}</td>
-                    <td className="message-cell">{voicemail.messageContent}</td>
-                    <td>{new Date(voicemail.dateTime).toLocaleString()}</td>
-                    <td>{voicemail.takenBy}</td>
-                    <td className="actions-cell">
-                      {!voicemail.returned && (
-                        <button className="btn-returned" onClick={() => markVoicemailAsReturned(voicemail.id)}>Returned</button>
-                      )}
-                      <button className="delete-btn" onClick={() => confirmDelete(voicemail.id)}>Delete</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {/* Display of Voicemails */}
+        {voicemails.length > 0 && (
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Your Voicemails</h2>
+            <div className="overflow-x-auto rounded-lg shadow-md">
+              <div className="max-h-96 overflow-y-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">From</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">To</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Message</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date/Time</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Taken By</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {voicemails.map((voicemail) => (
+                      <tr key={voicemail.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{voicemail.fromName}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{voicemail.toName}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatPhoneNumber(voicemail.phoneNumber)}</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">{voicemail.messageContent}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{new Date(voicemail.dateTime).toLocaleString()}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{voicemail.takenBy}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <div className="flex space-x-2">
+                            {!voicemail.returned && (
+                              <button
+                                className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition duration-150 ease-in-out"
+                                onClick={() => markVoicemailAsReturned(voicemail.id)}
+                              >
+                                Returned
+                              </button>
+                            )}
+                            <button
+                              className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition duration-150 ease-in-out"
+                              onClick={() => confirmDelete(voicemail.id)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {voicemails.length === 0 && (
+          <div className="mt-8 text-center">
+            <p className="text-gray-600">No voicemails to display.</p>
           </div>
         )}
       </div>
 
-
-
       {/* Confirmation Modal */}
       {showConfirmationModal && (
-        <div className="modal-overlay visible">
-          <div className="modal-content">
-            <h3>Confirm Deletion</h3>
-            <p>Are you sure you want to delete this voicemail?</p>
-            <div className="modal-buttons">
-              <button id="confirmDeleteBtn" className="btn-confirm" onClick={deleteVoicemail}>Delete</button>
-              <button id="cancelDeleteBtn" className="btn-cancel" onClick={cancelDelete}>Cancel</button>
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div className="mt-3 text-center">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Confirm Deletion</h3>
+              <p className="text-sm text-gray-500 mb-6">Are you sure you want to delete this voicemail?</p>
+              <div className="flex justify-center space-x-4">
+                <button
+                  className="px-4 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-150 ease-in-out"
+                  onClick={deleteVoicemail}
+                >
+                  Delete
+                </button>
+                <button
+                  className="px-4 py-2 bg-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-150 ease-in-out"
+                  onClick={cancelDelete}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
