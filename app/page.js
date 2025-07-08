@@ -9,6 +9,7 @@ import {
   deleteVoicemail as deleteVoicemailFromDb, 
   markVoicemailAsReturned as markVoicemailAsReturnedInDb 
 } from './actions';
+import { formatPhoneNumber, unformatPhoneNumber } from './utils/phoneFormatter';
 
 export default function Home() {
   // State variables for form inputs
@@ -72,10 +73,13 @@ export default function Home() {
     }
 
     try {
+      // Store the unformatted phone number in the database
+      const unformattedPhone = unformatPhoneNumber(phoneNumber);
+
       await addVoicemailToDb({
         fromName,
         toName,
-        phoneNumber,
+        phoneNumber: unformattedPhone,
         messageContent,
         dateTime,
         takenBy
@@ -178,7 +182,15 @@ export default function Home() {
           </div>
           <div className="form-group">
             <label htmlFor="phoneNumber">Phone Number:</label>
-            <input type="tel" id="phoneNumber" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required className="rounded-md" />
+            <input
+              type="tel"
+              id="phoneNumber"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(formatPhoneNumber(e.target.value))}
+              placeholder="(555) 123-4567"
+              required
+              className="rounded-md"
+            />
           </div>
           <div className="form-group">
             <label htmlFor="messageContent">Message:</label>
@@ -206,7 +218,7 @@ export default function Home() {
               <div key={voicemail.id} className="voicemail-card">
                 <p><strong>From:</strong> {voicemail.fromName}</p>
                 <p><strong>To:</strong> {voicemail.toName}</p>
-                <p><strong>Phone:</strong> {voicemail.phoneNumber}</p>
+                <p><strong>Phone:</strong> {formatPhoneNumber(voicemail.phoneNumber)}</p>
                 <p><strong>Message:</strong> {voicemail.messageContent}</p>
                 <p><strong>Date/Time:</strong> {new Date(voicemail.dateTime).toLocaleString()}</p>
                 <p><strong>Taken By:</strong> {voicemail.takenBy}</p>
