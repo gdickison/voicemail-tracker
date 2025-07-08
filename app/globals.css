@@ -102,6 +102,8 @@
 .voicemail-list-container {
   width: 100%;
   max-width: 600px;
+  margin-inline: auto;
+  font-family: var(--font-roboto), sans-serif;
 }
 
 .voicemail-card {
