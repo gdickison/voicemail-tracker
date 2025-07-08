@@ -168,8 +168,8 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 font-sans">
-      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
+    <div className="min-h-screen bg-gray-100 flex justify-center p-4 font-sans">
+      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl h-fit">
         <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Voicemail Message</h1>
 
         <form onSubmit={addVoicemail} className="space-y-4">
@@ -237,7 +237,7 @@ export default function Home() {
               value={takenBy}
               onChange={(e) => setTakenBy(e.target.value)}
               required
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"q
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
           <button
